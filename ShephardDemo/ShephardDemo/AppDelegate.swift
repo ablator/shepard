@@ -21,6 +21,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         let navigationController = splitViewController.viewControllers[splitViewController.viewControllers.count-1] as! UINavigationController
         navigationController.topViewController!.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
         splitViewController.delegate = self
+        
+        
+        let ablatorClient = AblatorClient(baseURL: "http://localhost:8000/")
+        ablatorClient.updateFunctionalityCacheFor(user: "winsmith", functionalityID: "8ca4a9d0-ac6b-4bfb-8d37-07feb1f7111e", completed: nil)
+        
         return true
     }
 

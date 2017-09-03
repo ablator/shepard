@@ -13,11 +13,7 @@ public class AblatorClient {
     // MARK: - Properties
     
     private static var defaultAblatorClient: AblatorClient = {
-        let ablatorClient = AblatorClient(baseURL: string: "http://ablator.space/")
-        
-        // Configuration
-        // ...
-        
+        let ablatorClient = AblatorClient(baseURL: "http://ablator.space/")
         return ablatorClient
     }()
     
@@ -27,7 +23,7 @@ public class AblatorClient {
     
     // Initialization
     
-    private init(baseURL: String) {
+    public init(baseURL: String) {
         self.baseURL = baseURL
     }
     
@@ -46,13 +42,19 @@ public class AblatorClient {
     
     // MARK: - Server Connections
     
+    func updateCaches() {
+        
+    }
+    
     func urlForMethod(method: String, user: String, functionalityID: String) -> URL? {
         let urlString = "\(self.baseURL)api/v1/\(method)/\(user)/\(functionalityID)/"
         return URL(string: urlString)
     }
     
-    func updateFunctionalityCacheFor(user: String, functionalityID: String, completed: @escaping ()->()) {
-        let url = urlForMethod(method: "caniuse", user: user, functionalityID: functionalityID)
+    public typealias completionHandlerType = () -> ()
+    
+    public func updateFunctionalityCacheFor(user: String, functionalityID: String, completed: completionHandlerType?) {
+        let url = urlForMethod(method: "which", user: user, functionalityID: functionalityID)
         if let usableUrl = url {
             let request = URLRequest(url: usableUrl)
             let task = URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
@@ -61,7 +63,7 @@ public class AblatorClient {
                         print(stringData) //JSONSerialization
                     }
                 }
-                completed()
+                completed?()
             })
             task.resume()
         }
