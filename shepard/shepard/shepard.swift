@@ -51,19 +51,22 @@ public class AblatorClient {
         return URL(string: urlString)
     }
     
-    public typealias completionHandlerType = () -> ()
+    public typealias completionHandlerType = (String?) -> ()
     
     public func updateFunctionalityCacheFor(user: String, functionalityID: String, completed: completionHandlerType?) {
         let url = urlForMethod(method: "which", user: user, functionalityID: functionalityID)
         if let usableUrl = url {
             let request = URLRequest(url: usableUrl)
             let task = URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
-                if let data = data {
-                    if let stringData = String(data: data, encoding: String.Encoding.utf8) {
-                        print(stringData) //JSONSerialization
+                var functionalityString: String? = nil
+                if let data = data,
+                let json = try? JSONSerialization.jsonObject(with: data, options: []),
+                let jsonDict = json as? [String: Any] {
+                    if let functionality = jsonDict["functionality"] as? String? {
+                        functionalityString = functionality
                     }
                 }
-                completed?()
+                completed?(functionalityString)
             })
             task.resume()
         }
