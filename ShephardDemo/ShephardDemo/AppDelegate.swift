@@ -24,7 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         
         
         let ablatorClient = AblatorClient(baseURL: "http://localhost:8000/")
-        ablatorClient.updateFunctionalityCacheFor(user: "winsmith", functionalityID: "8ca4a9d0-ac6b-4bfb-8d37-07feb1f7111e", completed: {functionalityString in print(functionalityString ?? "None") })
+        print(ablatorClient.which(user: "winsmith", functionalityID: "8ca4a9d0-ac6b-4bfb-8d37-07feb1f7111e", completed: {functionalityString in print(functionalityString ?? "None") }) ?? "(None)")
         
         return true
     }

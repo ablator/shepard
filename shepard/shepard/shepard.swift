@@ -20,6 +20,7 @@ public class AblatorClient {
     // MARK: -
     
     let baseURL: String
+    let cacheFileName = "AblatorCache.plist"
     
     // Initialization
     
@@ -33,18 +34,55 @@ public class AblatorClient {
         return defaultAblatorClient
     }
     
+    public func caniuse(user: String, functionalityID: String, completed: completionHandlerType? = nil) -> Bool {
+        if which(user: user, functionalityID: functionalityID) != nil {
+            return true
+        }
+        return false
+    }
+    
+    public func which(user: String, functionalityID: String, completed: completionHandlerType? = nil) -> String? {
+        updateFunctionalityCacheFor(user: user, functionalityID: functionalityID, completed: completed)
+        return cachedFunctionalityFor(user: user, functionality: functionalityID)
+    }
+    
     // MARK: - Caching
     
     func cachedFunctionalityFor(user: String, functionality: String) -> String? {
-        // caching is not implemented yet
-        return nil
+        let cacheDict = getCacheDict()
+        let functionalityString = cacheDict[cacheKeyFor(user: user, functionality: functionality)] ?? nil
+        return functionalityString
+    }
+    
+    func cacheFunctionalityFor(user: String, functionality: String, functionalityString: String) {
+        var cacheDict = getCacheDict()
+        cacheDict[cacheKeyFor(user: user, functionality: functionality)] = functionalityString
+        saveCacheDict(cacheDict: cacheDict)
+        
+    }
+    
+    private func cacheKeyFor(user: String, functionality: String) -> String {
+        return "\(functionality)---\(user)"
+    }
+    
+    private func getCacheDict() -> [String: String?] {
+        let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+        let fileURL = documentsURL?.appendingPathComponent(self.cacheFileName)
+        if let cacheDict = NSKeyedUnarchiver.unarchiveObject(withFile: fileURL!.path) as? [String: String?] {
+            return cacheDict
+        } else {
+            return [String: String?]()
+        }
+    }
+    
+    private func saveCacheDict(cacheDict: [String: String?]) {
+        let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+        let fileURL = documentsURL?.appendingPathComponent(self.cacheFileName)
+        NSKeyedArchiver.archiveRootObject(cacheDict, toFile: fileURL!.path)
     }
     
     // MARK: - Server Connections
     
-    func updateCaches() {
-        
-    }
     
     func urlForMethod(method: String, user: String, functionalityID: String) -> URL? {
         let urlString = "\(self.baseURL)api/v1/\(method)/\(user)/\(functionalityID)/"
@@ -53,7 +91,7 @@ public class AblatorClient {
     
     public typealias completionHandlerType = (String?) -> ()
     
-    public func updateFunctionalityCacheFor(user: String, functionalityID: String, completed: completionHandlerType?) {
+    func updateFunctionalityCacheFor(user: String, functionalityID: String, completed: completionHandlerType?) {
         let url = urlForMethod(method: "which", user: user, functionalityID: functionalityID)
         if let usableUrl = url {
             let request = URLRequest(url: usableUrl)
