@@ -43,14 +43,14 @@ public class AblatorClient {
     
     public func which(user: String, functionalityID: String, completed: completionHandlerType? = nil) -> String? {
         updateFunctionalityCacheFor(user: user, functionalityID: functionalityID, completed: completed)
-        return cachedFunctionalityFor(user: user, functionality: functionalityID)
+        return cachedFunctionalityFor(user: user, functionalityID: functionalityID)
     }
     
     // MARK: - Caching
     
-    func cachedFunctionalityFor(user: String, functionality: String) -> String? {
+    func cachedFunctionalityFor(user: String, functionalityID: String) -> String? {
         let cacheDict = getCacheDict()
-        let functionalityString = cacheDict[cacheKeyFor(user: user, functionality: functionality)] ?? nil
+        let functionalityString = cacheDict[cacheKeyFor(user: user, functionality: functionalityID)] ?? nil
         return functionalityString
     }
     
