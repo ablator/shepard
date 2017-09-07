@@ -50,19 +50,19 @@ public class AblatorClient {
     
     func cachedFunctionalityFor(user: String, functionalityID: String) -> String? {
         let cacheDict = getCacheDict()
-        let functionalityString = cacheDict[cacheKeyFor(user: user, functionality: functionalityID)] ?? nil
+        let functionalityString = cacheDict[cacheKeyFor(user: user, functionalityID: functionalityID)] ?? nil
         return functionalityString
     }
     
-    func cacheFunctionalityFor(user: String, functionality: String, functionalityString: String) {
+    func cacheFunctionalityFor(user: String, functionalityID: String, functionalityString: String?) {
         var cacheDict = getCacheDict()
-        cacheDict[cacheKeyFor(user: user, functionality: functionality)] = functionalityString
+        cacheDict[cacheKeyFor(user: user, functionalityID: functionalityID)] = functionalityString
         saveCacheDict(cacheDict: cacheDict)
         
     }
     
-    private func cacheKeyFor(user: String, functionality: String) -> String {
-        return "\(functionality)---\(user)"
+    private func cacheKeyFor(user: String, functionalityID: String) -> String {
+        return "\(functionalityID)---\(user)"
     }
     
     private func getCacheDict() -> [String: String?] {
@@ -102,6 +102,7 @@ public class AblatorClient {
                 let jsonDict = json as? [String: Any] {
                     if let functionality = jsonDict["functionality"] as? String? {
                         functionalityString = functionality
+                        self.cacheFunctionalityFor(user: user, functionalityID: functionalityID, functionalityString: functionalityString)
                     }
                 }
                 completed?(functionalityString)
