@@ -24,7 +24,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         
         
         let ablatorClient = AblatorClient(baseURL: "http://localhost:8000/")
-        print(ablatorClient.which(user: "winsmith", functionalityID: "8ca4a9d0-ac6b-4bfb-8d37-07feb1f7111e", completed: {functionalityString in print(functionalityString ?? "None") }) ?? "(None)")
+        let username = "yourusername"
+        let functionalityID = ""
+        let availability = ablatorClient.which(user: username, functionalityID: functionalityID, completed: {functionalityString in print(functionalityString ?? "No Availability") })
         
         return true
     }
