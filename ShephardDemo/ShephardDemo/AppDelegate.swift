@@ -23,10 +23,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         splitViewController.delegate = self
         
         
-        let ablatorClient = AblatorClient(baseURL: "http://localhost:8000/")
-        let username = "yourusername"
-        let functionalityID = ""
-        let availability = ablatorClient.which(user: username, functionalityID: functionalityID, completed: {functionalityString in print(functionalityString ?? "No Availability") })
+        let ablatorClient = AblatorClient(baseURL: "http://ablator.space/")
+        let username = UIDevice.current.identifierForVendor!.uuidString
+        let appID = "8931262e-150c-41de-8be2-98a59c766314"
+        let availability = ablatorClient.which(user: username, functionalityID: appID, completed: {functionalityString in print(functionalityString ?? "No Availability") })
         
         return true
     }
