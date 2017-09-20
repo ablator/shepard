@@ -17,96 +17,98 @@ public class AblatorClient {
         return ablatorClient
     }()
     
-    // MARK: -
+    // MARK: - Configuration
     
     let baseURL: String
-    let cacheFileName = "AblatorCache.plist"
+    var username: String?
+    var appID: String?
+    let cacheFileName = "AblatorCacheList.plist"
     
-    // Initialization
+    // MARK: - Initialization
     
-    public init(baseURL: String) {
+    public init(baseURL: String, username: String? = nil, appID: String? = nil) {
         self.baseURL = baseURL
+        self.username = username
+        self.appID = appID
+        
+        self.updateCache()
     }
-    
-    // MARK: - Accessors
     
     class func `default`() -> AblatorClient {
         return defaultAblatorClient
     }
     
-    public func caniuse(user: String, functionalityID: String, completed: completionHandlerType? = nil) -> Bool {
-        if which(user: user, functionalityID: functionalityID) != nil {
-            return true
-        }
-        return false
-    }
-    
-    public func which(user: String, functionalityID: String, completed: completionHandlerType? = nil) -> String? {
-        updateFunctionalityCacheFor(user: user, functionalityID: functionalityID, completed: completed)
-        return cachedFunctionalityFor(user: user, functionalityID: functionalityID)
-    }
-    
-    // MARK: - Caching
-    
-    func cachedFunctionalityFor(user: String, functionalityID: String) -> String? {
-        let cacheDict = getCacheDict()
-        let functionalityString = cacheDict[cacheKeyFor(user: user, functionalityID: functionalityID)] ?? nil
-        return functionalityString
-    }
-    
-    func cacheFunctionalityFor(user: String, functionalityID: String, functionalityString: String?) {
-        var cacheDict = getCacheDict()
-        cacheDict[cacheKeyFor(user: user, functionalityID: functionalityID)] = functionalityString
-        saveCacheDict(cacheDict: cacheDict)
-        
-    }
-    
-    private func cacheKeyFor(user: String, functionalityID: String) -> String {
-        return "\(functionalityID)---\(user)"
-    }
-    
-    private func getCacheDict() -> [String: String?] {
-        let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
-        let fileURL = documentsURL?.appendingPathComponent(self.cacheFileName)
-        if let cacheDict = NSKeyedUnarchiver.unarchiveObject(withFile: fileURL!.path) as? [String: String?] {
-            return cacheDict
-        } else {
-            return [String: String?]()
-        }
-    }
-    
-    private func saveCacheDict(cacheDict: [String: String?]) {
-        let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
-        let fileURL = documentsURL?.appendingPathComponent(self.cacheFileName)
-        NSKeyedArchiver.archiveRootObject(cacheDict, toFile: fileURL!.path)
-    }
-    
-    // MARK: - Server Connections
+    // MARK: - Retrieval from Server
     
     func urlForMethod(method: String, user: String, appID: String) -> URL? {
         let urlString = "\(self.baseURL)api/v2/\(method)/\(user)/\(appID)/"
         return URL(string: urlString)
     }
     
-    public typealias completionHandlerType = (String?) -> ()
+    public typealias completionHandlerType = ([String]?) -> ()
     
-    func updateFunctionalityCacheFor(user: String, functionalityID: String, completed: completionHandlerType?) {
-        let url = urlForMethod(method: "which", user: user, appID: functionalityID)
-        if let usableUrl = url {
-            let request = URLRequest(url: usableUrl)
-            let task = URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
-                var functionalityString: String? = nil
-                if let data = data,
-                let json = try? JSONSerialization.jsonObject(with: data, options: []),
-                let jsonDict = json as? [String: Any] {
-                    if let functionality = jsonDict["functionality"] as? String? {
-                        functionalityString = functionality
-                        self.cacheFunctionalityFor(user: user, functionalityID: functionalityID, functionalityString: functionalityString)
-                    }
-                }
-                completed?(functionalityString)
-            })
-            task.resume()
+    func updateCache(completed: completionHandlerType? = nil) {
+        guard let appID = self.appID else { debugPrint("Ablator: App ID not defined, cancelling request."); return }
+        guard let username = self.username else { debugPrint("Ablator: Username not defined, cancelling request."); return }
+        guard let url = urlForMethod(method: "which", user: username, appID: appID) else {
+            debugPrint("Ablator: Could not create URL, cancelling request.")
+            return
+        }
+        
+        let request = URLRequest(url: url)
+        let task = URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
+            guard let data = data else { debugPrint("Ablator: Did not receive data from the server."); return }
+            
+            do {
+                let decoder = JSONDecoder()
+                let availabilities = try decoder.decode([String].self, from: data)
+                self.saveCachedAvailabilityList(availabilityList: availabilities)
+                completed?(availabilities)
+            }
+            catch {
+                debugPrint("Ablator: Error while parsing JSON from the server.")
+                return
+            }
+        })
+        task.resume()
+    }
+    
+    // MARK: - Caching
+    
+    private func getCachedAvailabilityList() -> [String] {
+        let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+        let fileURL = documentsURL?.appendingPathComponent(self.cacheFileName)
+        if let cachedAvailabilities = NSKeyedUnarchiver.unarchiveObject(withFile: fileURL!.path) as? [String] {
+            return cachedAvailabilities
+        } else {
+            return [String]()
         }
     }
+    
+    private func saveCachedAvailabilityList(availabilityList: [String]) {
+        let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+        let fileURL = documentsURL?.appendingPathComponent(self.cacheFileName)
+        NSKeyedArchiver.archiveRootObject(availabilityList, toFile: fileURL!.path)
+    }
+    
+    // MARK: - Public Methods
+    
+    public func canIUse(functionalityName: String) -> Bool {
+        for availability in getCachedAvailabilityList() {
+            if availability.starts(with: functionalityName) {
+                return true
+            }
+        }
+        return false
+    }
+    
+    public func which(functionalityName: String) -> String? {
+        for availability in getCachedAvailabilityList() {
+            if availability.starts(with: functionalityName) {
+                return availability
+            }
+        }
+        return nil
+    }
+    
 }
