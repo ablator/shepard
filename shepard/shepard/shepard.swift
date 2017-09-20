@@ -83,16 +83,15 @@ public class AblatorClient {
     
     // MARK: - Server Connections
     
-    
-    func urlForMethod(method: String, user: String, functionalityID: String) -> URL? {
-        let urlString = "\(self.baseURL)api/v1/\(method)/\(user)/\(functionalityID)/"
+    func urlForMethod(method: String, user: String, appID: String) -> URL? {
+        let urlString = "\(self.baseURL)api/v2/\(method)/\(user)/\(appID)/"
         return URL(string: urlString)
     }
     
     public typealias completionHandlerType = (String?) -> ()
     
     func updateFunctionalityCacheFor(user: String, functionalityID: String, completed: completionHandlerType?) {
-        let url = urlForMethod(method: "which", user: user, functionalityID: functionalityID)
+        let url = urlForMethod(method: "which", user: user, appID: functionalityID)
         if let usableUrl = url {
             let request = URLRequest(url: usableUrl)
             let task = URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
