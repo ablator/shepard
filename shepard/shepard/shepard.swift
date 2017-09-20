@@ -9,6 +9,7 @@
 
 import Foundation
 
+// TODO: Docs
 public class AblatorClient {
     // MARK: - Properties
     
@@ -93,6 +94,7 @@ public class AblatorClient {
     
     // MARK: - Public Methods
     
+    // TODO: Docs
     public func canIUse(functionalityName: String) -> Bool {
         for availability in getCachedAvailabilityList() {
             if availability.starts(with: functionalityName) {
@@ -102,6 +104,7 @@ public class AblatorClient {
         return false
     }
     
+    // TODO: Docs
     public func which(functionalityName: String) -> String? {
         for availability in getCachedAvailabilityList() {
             if availability.starts(with: functionalityName) {
