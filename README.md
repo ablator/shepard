@@ -1,4 +1,4 @@
-# Ablator Python Client
+# Ablator Swift Client
 This is *shepard* -- a Swift client for the [ablator functionality switching server](https://github.com/ablator/ablator/).
 
 Using shepard, you can connect to a hosted or self-hosted instance of ablator from inside your app, and check which functionalities to present to your user. You can find more info about ablator at [ablator.io](http://ablator.io/).
