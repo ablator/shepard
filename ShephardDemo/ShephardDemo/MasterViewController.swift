@@ -37,8 +37,10 @@ class MasterViewController: UITableViewController {
         // `canIUse` example:
         if (ablatorClient.canIUse(functionalityName: super_advanced_functionality)) {
             // Enable Super Advanced Mode
+            print("Super Advanced Mode: On")
         } else {
             // Disable Super Advanced Mode
+            print("Super Advanced Mode: Off")
         }
         
         // `which` example
