@@ -52,7 +52,7 @@ override func viewDidLoad() {
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     let ablatorClient = appDelegate.ablatorClient!
 
-    // These functionality n are copied from the web interface
+    // These functionality names are copied from the web interface
     let super_advanced_functionality = "breakthesystem.test-app.super-advanced-functionality"
     let button_color_functionality = "breakthesystem.test-app.button-color"
 
