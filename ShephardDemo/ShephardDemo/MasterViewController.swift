@@ -25,6 +25,10 @@ class MasterViewController: UITableViewController {
             let controllers = split.viewControllers
             detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
         }
+        
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let ablatorClient = appDelegate.ablatorClient
+        print(ablatorClient?.which(functionalityName: "breakthesystem.test-app.super-advanced-functionality") ?? "None")
     }
 
     override func viewWillAppear(_ animated: Bool) {
