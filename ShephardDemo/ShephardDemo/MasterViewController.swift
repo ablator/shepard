@@ -26,9 +26,34 @@ class MasterViewController: UITableViewController {
             detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
         }
         
+        // Retrieve the ablatorClient from the app delegate
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        let ablatorClient = appDelegate.ablatorClient
-        print(ablatorClient?.which(functionalityName: "breakthesystem.test-app.super-advanced-functionality") ?? "None")
+        let ablatorClient = appDelegate.ablatorClient!
+        
+        // These functionality names are copied from the web interface
+        let super_advanced_functionality = "breakthesystem.test-app.super-advanced-functionality"
+        let button_color_functionality = "breakthesystem.test-app.button-color"
+        
+        // `canIUse` example:
+        if (ablatorClient.canIUse(functionalityName: super_advanced_functionality)) {
+            // Enable Super Advanced Mode
+        } else {
+            // Disable Super Advanced Mode
+        }
+        
+        // `which` example
+        // The values for the individual cases are copied from the web interface
+        switch ablatorClient.which(functionalityName: button_color_functionality) {
+            
+        case "breakthesystem.test-app.button-color.wine-red"?:
+            print("make the buttons wine red")
+            
+        case "breakthesystem.test-app.button-color.turquoise"?:
+            print("make the buttons turquise")
+            
+        default:
+            print("Make the buttons the default color")
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
