@@ -11,6 +11,8 @@ import shepard
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDelegate {
+    
+    var ablatorClient: AblatorClient?
 
     var window: UIWindow?
 
@@ -22,11 +24,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         navigationController.topViewController!.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
         splitViewController.delegate = self
         
+        // Initialize the ablator client and set it aside for later use
+        // This will automatically cache your user's availabilities,
+        // so calls to which and canIUse are quick and and synchronous
+        let username = UIDevice.current.identifierForVendor!.uuidString
+        let appID = "8931262e-150c-41de-8be2-98a59c766314"
+        let ablatorClient = AblatorClient(baseURL: "http://ablator.space/", username: username, appID: appID)
         
-        let ablatorClient = AblatorClient(baseURL: "http://localhost:8000/")
-        let username = "yourusername"
-        let functionalityID = ""
-        let availability = ablatorClient.which(user: username, functionalityID: functionalityID, completed: {functionalityString in print(functionalityString ?? "No Availability") })
+        self.ablatorClient = ablatorClient
         
         return true
     }

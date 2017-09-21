@@ -18,27 +18,67 @@ If you call shepard's `which` method, it will return either `nil` if the functio
 
 ### Example:
 
+First, initialize the ablator client in your **`AppDelegate.swift`**:
+
 ```
-import shepard
-let ablatorClient = AblatorClient(baseURL: "http://ablator.space/")
-let username = UIDevice.current.identifierForVendor!.uuidString
-let functionalityID = "f8077bfe-bb42-404c-a0d0-3fa107b01860"
+var ablatorClient: AblatorClient?
 
-# The function `which` will return immediately
-# with a cached value that should be enough for most uses. If you need
-# an up-to-date value and are willing to wait 50-100ms for it, use the
-# provided completion block.
-let availability = ablatorClient.which(
-    user: username,
-    functionalityID: functionalityID,
-    completed:
-    { functionalityString in
-        print(functionalityString ?? "No Availability")
+func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+
+    // other initialization of your app
+    // ...
+    
+    // Initialize the ablator client and set it aside for later use
+    // This will automatically cache your user's availabilities,
+    // so calls to which and canIUse are quick and and synchronous
+    let username = UIDevice.current.identifierForVendor!.uuidString
+    let appID = "8931262e-150c-41de-8be2-98a59c766314"
+    let ablatorClient = AblatorClient(baseURL: "http://ablator.space/", username: username, appID: appID)
+
+    self.ablatorClient = ablatorClient
+
+    return true
+}
+```
+
+This automatically retrieves the set of availabilities for your user. Then, when you want to use functionality switching in your **ViewController**:
+
+```
+override func viewDidLoad() {
+    super.viewDidLoad()
+    // Do any additional setup after loading the view, typically from a nib.
+
+    // Retrieve the ablatorClient from the app delegate
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    let ablatorClient = appDelegate.ablatorClient!
+
+    // These functionality n are copied from the web interface
+    let super_advanced_functionality = "breakthesystem.test-app.super-advanced-functionality"
+    let button_color_functionality = "breakthesystem.test-app.button-color"
+
+    // `canIUse` example:
+    if (ablatorClient.canIUse(functionalityName: super_advanced_functionality)) {
+        // Enable Super Advanced Mode
+    } else {
+        // Disable Super Advanced Mode
     }
-)
+}
+```
 
-# this will return one of the following:
-# availability == "orgname.test-app.test-func.green"
-# availability == "orgname.test-app.test-func.blue"
-# availability == nil
+or, if you have defined more than one flavor, for e.g. A/B testing:
+
+```
+// `which` example
+// The values for the individual cases are copied from the web interface
+switch ablatorClient.which(functionalityName: button_color_functionality) {
+
+case "breakthesystem.test-app.button-color.wine-red"?:
+    print("make the buttons wine red")
+
+case "breakthesystem.test-app.button-color.turquoise"?:
+    print("make the buttons turquise")
+
+default:
+    print("Make the buttons the default color")
+}
 ```
