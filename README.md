@@ -27,7 +27,7 @@ If you call shepard's `which` method, it will return either `nil` if the functio
 
 First, initialize the ablator client in your **`AppDelegate.swift`**:
 
-```
+```swift
 var ablatorClient: AblatorClient?
 
 func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
@@ -50,7 +50,7 @@ func application(_ application: UIApplication, didFinishLaunchingWithOptions lau
 
 This automatically retrieves the set of availabilities for your user. Then, when you want to use functionality switching in your **ViewController**:
 
-```
+```swift
 override func viewDidLoad() {
     super.viewDidLoad()
     // Do any additional setup after loading the view, typically from a nib.
@@ -74,7 +74,7 @@ override func viewDidLoad() {
 
 or, if you have defined more than one flavor, for e.g. A/B testing:
 
-```
+```swift
 // `which` example
 // The values for the individual cases are copied from the web interface
 switch ablatorClient.which(functionalityName: button_color_functionality) {
