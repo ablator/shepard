@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DC526F861FDED166003F30FE /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = DC526F841FDED166003F30FE /* README.md */; };
 		DCD233C41F5C17C600A0C0F6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCD233C31F5C17C600A0C0F6 /* AppDelegate.swift */; };
 		DCD233C61F5C17C600A0C0F6 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCD233C51F5C17C600A0C0F6 /* MasterViewController.swift */; };
 		DCD233C81F5C17C600A0C0F6 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCD233C71F5C17C600A0C0F6 /* DetailViewController.swift */; };
@@ -56,6 +57,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		DC526F841FDED166003F30FE /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		DCD233C01F5C17C600A0C0F6 /* ShephardDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShephardDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DCD233C31F5C17C600A0C0F6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DCD233C51F5C17C600A0C0F6 /* MasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
@@ -82,6 +84,7 @@
 		DCD233B71F5C17C600A0C0F6 = {
 			isa = PBXGroup;
 			children = (
+				DC526F841FDED166003F30FE /* README.md */,
 				DCD233FB1F5C185900A0C0F6 /* shepard.xcodeproj */,
 				DCD233C21F5C17C600A0C0F6 /* ShephardDemo */,
 				DCD233C11F5C17C600A0C0F6 /* Products */,
@@ -205,6 +208,7 @@
 			files = (
 				DCD233D01F5C17C600A0C0F6 /* LaunchScreen.storyboard in Resources */,
 				DCD233CD1F5C17C600A0C0F6 /* Assets.xcassets in Resources */,
+				DC526F861FDED166003F30FE /* README.md in Resources */,
 				DCD233CB1F5C17C600A0C0F6 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

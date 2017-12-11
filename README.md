@@ -10,9 +10,16 @@ Inclusion in CocoaPods is planned. Right now, you'll have to clone this reposito
 To use ablator, you'll need two things: 
 
 - A username of some sort. A string of any kind that represents your user. On iOS, you cloud simply use `UIDevice.current.identifierForVendor!.uuidString`.
-- The ID of your functionality. After you have created the functionality in the ablator web interface, copy and paste it into your code. 
+- The ID of your app entry in ablator. After you have created the app in the ablator web interface, copy and paste it into your code.
 
-If you call shepard's `caniuse` method, it will return either `true` or `false` depending on wether the functionality is enabled for your user. The result of this is cached in a plist file.
+### Initialize
+
+Using these two bits of information, you can initalize shepard during your app startup. During initialization, shepard will update the list
+of enabled functionalities for your app, so they are cached for later use.
+
+### Use
+
+If you call shepard's `caniuse` method, it will return either `true` or `false` depending on wether the functionality is enabled for your user.
 
 If you call shepard's `which` method, it will return either `nil` if the functionality is not enabled for your user, or a string like `orgname.appname.funcname.flavorname` for the flavour that has been selected.
 
